@@ -1,7 +1,7 @@
 version: "3"
 services:
   app:
-    container_name: "techbizz/scrapper"
+    container_name: "fastapi_app"
     restart: always
     build: . # Current directory!
     command: "/usr/local/bin/gunicorn --preload -b 0.0.0.0:8000 -w 4 -k uvicorn.workers.UvicornWorker app.main:app"
