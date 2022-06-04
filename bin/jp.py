@@ -1,4 +1,4 @@
-#!/home/apache/pythonProjects/fastapiVenv/bin/python
+#!/home/apache/PycharmProjects/fastApi/bin/python
 
 import sys
 import json
