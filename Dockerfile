@@ -17,4 +17,4 @@ COPY . /fastApi
 RUN pip3 install -r /fastApi/requirements.txt
 
 WORKDIR /fastApi/
-ENTRYPOINT ["/usr/local/bin/gunicorn", "--preload", "-b 0.0.0.0:8000","-w 4", "-k uvicorn.workers.UvicornWorker","app.main:app"]
+#ENTRYPOINT ["/usr/local/bin/gunicorn", "app.main:app", "--preload", "-b 0.0.0.0:8000","-w 4", "-k uvicorn.workers.UvicornWorker"]

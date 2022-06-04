@@ -2,7 +2,6 @@ import os
 
 import requests
 
-# from app.main import static_path
 static_path = os.path.join(os.path.dirname(__file__), 'static')
 
 

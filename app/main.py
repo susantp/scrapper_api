@@ -26,7 +26,6 @@ app = FastAPI(
     },
     openapi_url="/openapi.json"
 )
-static_path = os.path.join(os.path.dirname(__file__), 'static')
 scrap_api_token = settings.scrap_api_token
 
 
