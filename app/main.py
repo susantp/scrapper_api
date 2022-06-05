@@ -48,6 +48,7 @@ async def scrap_list():
 
 @app.get('/')
 async def home():
+    return "here"
     return {"welcome"}
 
 # app.include_router(comment_main.router)
