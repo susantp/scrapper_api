@@ -11,10 +11,9 @@ ENV APP_NAME "fast api"
 ENV ADMIN_EMAIL "gracysusant@gmail.com"
 ENV DB_URL "mysql+mysqlconnector://root:root@mysql:3306/fastapi"
 ENV SCRAP_API_TOKEN "dd424a4ae2c60473bb07132def3b89a1"
+
+COPY . /var/www/fastApi
 #COPY requirements.txt /app/requirements.txt
+RUN pip3 install -r /var/www/fastApi/requirements.txt
 
-COPY . /fastApi
-RUN pip3 install -r /fastApi/requirements.txt
-
-WORKDIR /fastApi/
 #ENTRYPOINT ["/usr/local/bin/gunicorn", "app.main:app", "--preload", "-b 0.0.0.0:8000","-w 4", "-k uvicorn.workers.UvicornWorker"]
