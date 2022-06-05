@@ -11,6 +11,7 @@ class Populate:
         self.stream = stream
         self.product_asin_id = None
         self.product_details = None
+        self.product_images = None
         self.product_title = None
         self.product_price = None
         self.product_description = None
@@ -18,6 +19,12 @@ class Populate:
         self.product_information = None
         self.product_list = None
         self.product = None
+
+    def pick_product_images(self):
+        soup = BeautifulSoup(self.stream, "lxml")
+        el = soup.select("#main-image-container > ul > li ")
+        # self.product_images = el['data-old-hires']
+        return self.product_images
 
     def pick_product_price(self):
         soup = BeautifulSoup(self.stream, "lxml")
@@ -64,8 +71,8 @@ class Populate:
         if product_details is not None:
             for y in product_details:
                 detail = y.text.split(":")
-                key = detail[0].replace(" ", "").replace("•", "").replace("\n", "").replace("\u200f", "").strip()
-                value = detail[1].replace(" ", "").replace("\n", "").replace("\u200e", "").strip()
+                key = detail[0].replace("•", "").replace("\n", "").replace("\u200f", "").strip()
+                value = detail[1].replace("\n", "").replace("\u200e", "").strip()
                 details[key] = value
                 self.product_details = details
 
