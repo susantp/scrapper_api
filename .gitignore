@@ -1,3 +1,5 @@
 # created by virtualenv automatically
 __pycache__
 .idea
+lib
+bin
