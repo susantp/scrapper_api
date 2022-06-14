@@ -1,7 +1,8 @@
 import os.path
 
 from fastapi import FastAPI
-
+from fastapi.responses import JSONResponse
+from fastapi.encoders import jsonable_encoder
 from app.Populate import Populate
 from app.Scrapper import Scrape
 from app.config import settings
@@ -34,7 +35,9 @@ async def scrap_page(asin_id=""):
     if not len(asin_id) > 0:
         return {"message": "please provide asin id"}
     stream = Scrape().crawl_page(asin_id)
-    return Populate(stream).get_product(asin_id)
+    data = Populate(stream).get_product(asin_id)
+    response = jsonable_encoder(data)
+    return JSONResponse(content=response)
 
 
 @app.get('/get_product_list')
@@ -43,7 +46,8 @@ async def scrap_list():
     stream = Scrape().get_stream_local(list_path)
     ids = Populate(stream).populate_ids_from_product_list_page()
     products = Populate(stream).get_products(ids, 0, 3)
-    return products
+    response = jsonable_encoder(products)
+    return JSONResponse(content=response)
 
 
 @app.get('/')
