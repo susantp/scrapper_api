@@ -1,8 +1,7 @@
-import os.path
-
 from fastapi import FastAPI, BackgroundTasks
-from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
+from fastapi.responses import JSONResponse
+
 from app.Populate import Populate
 from app.Scrapper import Scrape
 from app.config import settings
@@ -45,14 +44,13 @@ async def scrap_list(background_tasks: BackgroundTasks):
     list_path = "product_list_page/list.html"
     stream = Scrape().get_stream_local(list_path)
     ids = Populate(stream).populate_ids_from_product_list_page()
-    products = Populate(stream).get_products(ids, 0, 24, background_tasks)
+    products = Populate(stream).get_products(ids, 0, 30, background_tasks)
     response = jsonable_encoder(products)
     return JSONResponse(content=response)
 
 
 @app.get('/')
 async def home():
-    return "here"
     return {"welcome"}
 
 # app.include_router(comment_main.router)
