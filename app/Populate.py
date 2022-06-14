@@ -110,7 +110,7 @@ class Populate:
             price = asin_ids[item]['price']
             stream = Scrape().crawl_page(asin_id)
 
-            single_product[asin_id] = {
+            single_product[start_index] = {
                 "slug": asin_id,
                 'title': Populate(stream).pick_product_title(),
                 'description': Populate(stream).pick_product_description(),
