@@ -103,12 +103,12 @@ class Populate:
         }
         return self.product
 
-    def get_products(self, asin_ids, start_index=0, end_index=10):
+    def get_products(self, asin_ids, start_index=0, end_index=10, background_tasks=None):
         single_product = dict()
         for item in asin_ids:
             asin_id = asin_ids[item]['asin_id']
             price = asin_ids[item]['price']
-            stream = Scrape().crawl_page(asin_id)
+            stream = Scrape().crawl_page(asin_id, background_tasks)
 
             single_product[start_index] = {
                 "slug": asin_id,
