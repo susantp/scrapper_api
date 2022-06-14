@@ -44,9 +44,16 @@ async def scrap_list(background_tasks: BackgroundTasks):
     list_path = "product_list_page/list.html"
     stream = Scrape().get_stream_local(list_path)
     ids = Populate(stream).populate_ids_from_product_list_page()
-    products = Populate(stream).get_products(ids, 0, 70, background_tasks)
-    response = jsonable_encoder(products)
-    return JSONResponse(content=response)
+    products = Populate(stream).get_products(ids, 0, 95, background_tasks)
+    return JSONResponse(content=jsonable_encoder(products))
+
+
+@app.get('/get_list')
+async def get_list():
+    list_path = "product_list_page/list.html"
+    stream = Scrape().get_stream_local(list_path)
+    ids = Populate(stream).populate_ids_from_product_list_page()
+    return JSONResponse(content=jsonable_encoder(ids))
 
 
 @app.get('/')
