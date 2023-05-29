@@ -7,7 +7,7 @@ static_path = os.path.join(os.path.dirname(__file__), 'static')
 class Scrape:
     def __init__(self):
         self.local_file_path = None
-        self.page_url = "http://api.scraperapi.com?api_key=dd424a4ae2c60473bb07132def3b89a1&url=https://www.amazon" \
+        self.page_url = "http://api.scraperapi.com?api_key=api_key&url=https://www.amazon" \
                         ".com/dp/"
         self.stream = None
         self.message = None
