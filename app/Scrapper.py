@@ -12,10 +12,10 @@ class Scrape:
         self.stream = None
         self.message = None
 
-    def crawl_page(self, asin_id, background_tasks=None):  # check if file exists locally, craws local else crawl remote page url
+    def crawl_page(self, asin_id, background_tasks=None):  # check if file exists locally, craws local else crawl
+        # remote page url
         url = self.page_url + asin_id
         self.get_local_file_path_by_asin_id(asin_id)
-        ss = background_tasks
         if not os.path.exists(self.local_file_path):
             self.get_stream_remote(url)
             if background_tasks is not None:

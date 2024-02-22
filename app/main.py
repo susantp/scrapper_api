@@ -33,8 +33,9 @@ scrap_api_token = settings.scrap_api_token
 async def scrap_page(asin_id=""):
     if not len(asin_id) > 0:
         return {"message": "please provide asin id"}
-    stream = Scrape().crawl_page(asin_id)
-    data = Populate(stream).get_product(asin_id)
+    sanitized_asin_id = ''.join(char for char in asin_id if char.isalnum())
+    stream = Scrape().crawl_page(sanitized_asin_id)
+    data = Populate(stream).get_product(sanitized_asin_id)
     response = jsonable_encoder(data)
     return JSONResponse(content=response)
 
