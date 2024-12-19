@@ -46,7 +46,7 @@ PyMySQL==1.1.1
 pyOpenSSL==24.0.0
 python-dateutil==2.8.2
 python-dotenv==1.0.1
-python-multipart==0.0.9
+python-multipart==0.0.18
 PyYAML==6.0.1
 queuelib==1.6.2
 requests==2.31.0
