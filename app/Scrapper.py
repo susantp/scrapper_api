@@ -49,9 +49,15 @@ class Scrape:
         pass
 
     def get_local_file_path_by_path(self, path):
-        self.local_file_path = os.path.join(static_path, path)
+        normalized_path = os.path.normpath(os.path.join(static_path, path))
+        if not normalized_path.startswith(static_path):
+            raise Exception("Invalid path")
+        self.local_file_path = normalized_path
         return self.local_file_path
 
     def get_local_file_path_by_asin_id(self, asin_id):
-        self.local_file_path = os.path.join(static_path, "product_page/" + asin_id)
+        normalized_path = os.path.normpath(os.path.join(static_path, "product_page/" + asin_id))
+        if not normalized_path.startswith(static_path):
+            raise Exception("Invalid path")
+        self.local_file_path = normalized_path
         return self.local_file_path
