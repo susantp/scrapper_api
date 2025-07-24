@@ -49,7 +49,7 @@ python-dotenv==1.0.1
 python-multipart==0.0.18
 PyYAML==6.0.1
 queuelib==1.6.2
-requests==2.31.0
+requests==2.32.4
 requests-file==2.0.0
 Scrapy==2.11.1
 service-identity==24.1.0
