@@ -49,7 +49,7 @@ PyYAML==6.0.2
 queuelib==1.8.0
 requests==2.32.4
 requests-file==2.1.0
-Scrapy==2.13.3
+Scrapy==2.13.4
 service-identity==24.2.0
 six==1.17.0
 sniffio==1.3.1
