@@ -15,7 +15,7 @@ email-validator==2.2.0
 Faker==37.4.2
 fastapi==0.116.1
 fastapi-utils==0.8.0
-filelock==3.18.0
+filelock==3.20.1
 greenlet==3.2.3
 h11==0.16.0
 hyperlink==21.0.0
