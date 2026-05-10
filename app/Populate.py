@@ -22,12 +22,12 @@ class Populate:
 
     def pick_product_images(self):
         soup = BeautifulSoup(self.stream, "lxml")
-        el = soup.select("#main-image-container > ul > li ")
+        soup.select("#main-image-container > ul > li ")
         # self.product_images = el['data-old-hires']
         return self.product_images
 
     def pick_product_price(self):
-        soup = BeautifulSoup(self.stream, "lxml")
+        BeautifulSoup(self.stream, "lxml")
         #
         return self.product_price
 
@@ -85,9 +85,13 @@ class Populate:
 
         if product_info_table is not None:
             for items in product_info_table:
-                key = items.select_one("th").text.strip()
-                value = items.select_one("td").text.strip()
-                information[key] = value
+                th = items.select_one("th")
+                td = items.select_one("td")
+
+                if not th or not td:
+                    continue
+
+                information[th.get_text(strip=True)] = td.get_text(strip=True)
 
         self.product_information = information
         return self.product_information
@@ -126,17 +130,44 @@ class Populate:
 
     def populate_ids_from_product_list_page(self):
         soup = BeautifulSoup(self.stream, "lxml")
-        lists = soup.select("#ProductGrid-CdcDsKf > div > div > div > div > ul > li")
-        ids = dict()
-        for item in lists:
+
+        product_items = soup.select(
+            "#ProductGrid-CdcDsKf > div > div > div > div > ul > li"
+        )
+
+        ids: dict[str, dict[str, int | str]] = {}
+
+        for item in product_items:
             anchor_el = item.select_one("div:nth-child(1) > a")
             price_el = item.select_one(
-                "div.ProductGridItem__item__2jj5r.ProductGridItem__item-with-best-seller__2WzoC > div.ProductGridItem__itemInfo__s_dZ2 > div.ProductGridItem__itemInfoChild__1HpO6 > div.ProductGridItem__price__2H_kW > span")
+                "div.ProductGridItem__item__2jj5r.ProductGridItem__item-with-best-seller__2WzoC "
+                "> div.ProductGridItem__itemInfo__s_dZ2 "
+                "> div.ProductGridItem__itemInfoChild__1HpO6 "
+                "> div.ProductGridItem__price__2H_kW > span"
+            )
 
-            if (anchor_el is not None) and (price_el is not None):
-                asin_id = anchor_el['href'].split("/")[-1].split('?')[0]
-                price = price_el['aria-label'][1:].replace(",", "")
-                ids[asin_id] = {"asin_id": asin_id, "price": math.floor(float(price) * 100)}
+            if anchor_el is None or price_el is None:
+                continue
+
+            href = anchor_el.get("href")
+            aria_label = price_el.get("aria-label")
+
+            if not isinstance(href, str) or not isinstance(aria_label, str):
+                continue
+
+            asin_id = href.split("/")[-1].split("?")[0]
+
+            price_text = aria_label[1:].replace(",", "")
+
+            try:
+                price_cents = math.floor(float(price_text) * 100)
+            except ValueError:
+                continue
+
+            ids[asin_id] = {
+                "asin_id": asin_id,
+                "price": price_cents,
+            }
 
         self.ids = ids
         return self.ids

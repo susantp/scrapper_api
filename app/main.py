@@ -59,6 +59,6 @@ async def get_list():
 
 @app.get('/')
 async def home():
-    return {"welcome"}
+    return {"response": "welcome"}
 
-# app.include_router(comment_main.router)
+    # app.include_router(comment_main.router)

@@ -16,7 +16,7 @@ class Comments:
 
     @router.get('/comment')
     def get_comments(self):
-        records = self.db.execute('select * from comments')
+        records = self.db.execute("SELECT * FROM comment")
         data = records.fetchall()
         return {'data': data}
 
@@ -32,7 +32,7 @@ class Comments:
         if details is not None:
             return {'error': 'data already there'}
         try:
-            new_comment = CommentSchema(**comment_info.dict())
+            new_comment = CommentSchema(**comment_info.model_dump())
             self.db.add(new_comment)
             self.db.commit()
             self.db.refresh(new_comment)
