@@ -1,6 +1,4 @@
-from typing import List
-
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class CreateAndUpdateComment(BaseModel):
@@ -11,11 +9,10 @@ class CreateAndUpdateComment(BaseModel):
 class CommentModel(CreateAndUpdateComment):
     id: int
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class PaginatedCommentInfo(BaseModel):
     limit: int
     offset: int
-    data: List[CommentModel]
+    data: list[CommentModel]

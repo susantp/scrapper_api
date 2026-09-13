@@ -1,2 +1,6 @@
 Dockerfile
 .git
+.env
+.venv
+__pycache__
+*.db
