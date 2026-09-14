@@ -2,7 +2,7 @@ import math
 
 from bs4 import BeautifulSoup
 
-from app.Scrapper import Scrape
+from app.scrapper import Scrape
 
 
 class Populate:
@@ -27,8 +27,6 @@ class Populate:
         return self.product_images
 
     def pick_product_price(self):
-        BeautifulSoup(self.stream, "lxml")
-        #
         return self.product_price
 
     def pick_product_title(self):
@@ -52,7 +50,7 @@ class Populate:
         return self.product_description
 
     def pick_product_features(self):
-        features = dict()
+        features = {}
         soup = BeautifulSoup(self.stream, "lxml")
         feature_bullets = soup.select("div#feature-bullets li", None, limit=10)
 
@@ -64,14 +62,20 @@ class Populate:
         return self.product_features
 
     def pick_product_details(self):
-        details = dict()
+        details = {}
         soup = BeautifulSoup(self.stream, "lxml")
         product_details = soup.select("#detailBullets_feature_div > ul > li")
 
         if product_details is not None:
             for y in product_details:
                 detail = y.text.split(":")
-                key = detail[0].replace("•", "").replace("\n", "").replace("\u200f", "").strip()
+                key = (
+                    detail[0]
+                    .replace("•", "")
+                    .replace("\n", "")
+                    .replace("\u200f", "")
+                    .strip()
+                )
                 value = detail[1].replace("\n", "").replace("\u200e", "").strip()
                 details[key] = value
                 self.product_details = details
@@ -79,7 +83,7 @@ class Populate:
         return self.product_details
 
     def pick_product_information(self):
-        information = dict()
+        information = {}
         soup = BeautifulSoup(self.stream, "lxml")
         product_info_table = soup.select("#productDetails_detailBullets_sections1 > tr")
 
@@ -100,27 +104,29 @@ class Populate:
         self.stream = Scrape().crawl_page(asin_id)
         self.product = {
             "slug": asin_id,
-            'title': self.pick_product_title(),
-            'description': self.pick_product_description(),
-            'features': self.pick_product_features(),
-            'details': self.pick_product_details(),
+            "title": self.pick_product_title(),
+            "description": self.pick_product_description(),
+            "features": self.pick_product_features(),
+            "details": self.pick_product_details(),
         }
         return self.product
 
-    def get_products(self, asin_ids, start_index=0, end_index=10, background_tasks=None):
-        single_product = dict()
+    def get_products(
+        self, asin_ids, start_index=0, end_index=10, background_tasks=None
+    ):
+        single_product = {}
         for item in asin_ids:
-            asin_id = asin_ids[item]['asin_id']
-            price = asin_ids[item]['price']
+            asin_id = asin_ids[item]["asin_id"]
+            price = asin_ids[item]["price"]
             stream = Scrape().crawl_page(asin_id, background_tasks)
 
             single_product[start_index] = {
                 "slug": asin_id,
-                'title': Populate(stream).pick_product_title(),
-                'description': Populate(stream).pick_product_description(),
-                'features': Populate(stream).pick_product_features(),
-                'details': Populate(stream).pick_product_details(),
-                'price': price
+                "title": Populate(stream).pick_product_title(),
+                "description": Populate(stream).pick_product_description(),
+                "features": Populate(stream).pick_product_features(),
+                "details": Populate(stream).pick_product_details(),
+                "price": price,
             }
             start_index += 1
             if start_index == end_index:

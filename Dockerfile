@@ -1,19 +1,23 @@
-FROM ubuntu:latest
+FROM ghcr.io/astral-sh/uv:0.12.11 AS uv
 
-RUN apt update && apt upgrade -y
+FROM python:3.14-slim-bookworm
 
-RUN apt install -y -q build-essential python3-pip python3-dev
-RUN pip3 install -U pip setuptools wheel
-RUN pip3 install gunicorn uvloop httptools
-ENV PYTHON_UNBUFFERED 1
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV APP_NAME "fast api"
-ENV ADMIN_EMAIL "gracysusant@gmail.com"
-ENV DB_URL "mysql+mysqlconnector://root:root@mysql:3306/fastapi"
-ENV SCRAP_API_TOKEN "dd424a4ae2c60473bb07132def3b89a1"
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PATH="/app/.venv/bin:$PATH"
 
-COPY . /var/www/fastApi
-#COPY requirements.txt /app/requirements.txt
-RUN pip3 install -r /var/www/fastApi/requirements.txt
+WORKDIR /app
 
-#ENTRYPOINT ["/usr/local/bin/gunicorn", "app.main:app", "--preload", "-b 0.0.0.0:8000","-w 4", "-k uvicorn.workers.UvicornWorker"]
+COPY --from=uv /uv /uvx /bin/
+COPY pyproject.toml uv.lock ./
+RUN uv sync --locked --no-dev --no-install-project
+
+COPY app ./app
+COPY comment ./comment
+
+RUN useradd --create-home --uid 10001 appuser \
+    && chown -R appuser:appuser /app
+USER appuser
+
+EXPOSE 8000
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

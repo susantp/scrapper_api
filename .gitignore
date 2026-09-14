@@ -4,5 +4,6 @@ __pycache__
 lib
 bin
 venv/
+.venv/
 .env
 *.db
