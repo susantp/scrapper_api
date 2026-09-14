@@ -19,8 +19,8 @@ class Scrape:
 
     def crawl_page(self, asin_id, background_tasks=None):
         url = f"https://www.amazon.com/dp/{asin_id}"
-        self.get_local_file_path_by_asin_id(asin_id)
-        if not os.path.exists(self.local_file_path):
+        local_file_path = self.get_local_file_path_by_asin_id(asin_id)
+        if not local_file_path.exists():
             self.get_stream_remote(url)
             if background_tasks is not None:
                 background_tasks.add_task(self.write_stream_to_file)
@@ -28,7 +28,7 @@ class Scrape:
             self.write_stream_to_file()
             return self.stream
 
-        return self.get_stream_local(self.local_file_path)
+        return self.get_stream_local(local_file_path)
 
     def get_stream_remote(self, url):
         if not settings.scrap_api_token:
@@ -57,17 +57,17 @@ class Scrape:
             file.write(self.stream or "")
 
     def get_local_file_path_by_path(self, path):
-        normalized_path = (STATIC_PATH / path).resolve()
-        if os.path.commonpath((STATIC_PATH, normalized_path)) != str(STATIC_PATH):
+        root_path = os.path.realpath(STATIC_PATH)
+        normalized_path = os.path.realpath(os.path.join(root_path, os.fspath(path)))
+        if not normalized_path.startswith(root_path + os.sep):
             raise ValueError("Invalid path")
+        normalized_path = Path(normalized_path)
         self.local_file_path = normalized_path
         return self.local_file_path
 
     def get_local_file_path_by_asin_id(self, asin_id):
         if not asin_id or not re.fullmatch(ASIN_PATTERN, asin_id):
             raise ValueError("Invalid ASIN")
-        normalized_path = (STATIC_PATH / "product_page" / asin_id).resolve()
-        if os.path.commonpath((STATIC_PATH, normalized_path)) != str(STATIC_PATH):
-            raise ValueError("Invalid path")
-        self.local_file_path = normalized_path
-        return self.local_file_path
+        return self.get_local_file_path_by_path(
+            os.path.join("product_page", asin_id)
+        )
