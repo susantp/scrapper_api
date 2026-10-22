@@ -1,19 +1,43 @@
-FROM ubuntu:latest
 
-RUN apt update && apt upgrade -y
+# Build dependencies
+FROM python:3.12-slim AS builder
 
-RUN apt install -y -q build-essential python3-pip python3-dev
-RUN pip3 install -U pip setuptools wheel
-RUN pip3 install gunicorn uvloop httptools
-ENV PYTHON_UNBUFFERED 1
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV APP_NAME "fast api"
-ENV ADMIN_EMAIL "gracysusant@gmail.com"
-ENV DB_URL "mysql+mysqlconnector://root:root@mysql:3306/fastapi"
-ENV SCRAP_API_TOKEN "dd424a4ae2c60473bb07132def3b89a1"
+COPY --from=ghcr.io/astral-sh/uv:0.13.1 /uv /uvx /bin/
 
-COPY . /var/www/fastApi
-#COPY requirements.txt /app/requirements.txt
-RUN pip3 install -r /var/www/fastApi/requirements.txt
+ENV UV_COMPILE_BYTECODE=0
 
-#ENTRYPOINT ["/usr/local/bin/gunicorn", "app.main:app", "--preload", "-b 0.0.0.0:8000","-w 4", "-k uvicorn.workers.UvicornWorker"]
+WORKDIR /app
+
+COPY requirements.txt .
+
+RUN uv venv /opt/venv && \
+    uv pip install \
+        --python /opt/venv/bin/python \
+        --no-cache \
+        -r requirements.txt
+
+# Lightweight production image
+FROM python:3.12-slim
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PATH="/opt/venv/bin:$PATH" \
+    APP_NAME="fast api"
+
+WORKDIR /var/www/fastApi
+
+COPY --from=builder /opt/venv /opt/venv
+
+COPY . .
+
+# Run as non-root
+RUN useradd --create-home --uid 10001 appuser && \
+    chown -R appuser:appuser /var/www/fastApi
+
+USER appuser
+
+EXPOSE 8000
+
+CMD ["uvicorn", "app.main:app", \
+     "--host", "0.0.0.0", \
+     "--port", "8000"]

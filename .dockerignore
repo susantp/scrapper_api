@@ -1,2 +1,11 @@
 Dockerfile
 .git
+.venv
+__pycache__
+*.pyc
+.env
+.env.*
+.pytest_cache
+.mypy_cache
+.ruff_cache
+tests/
