@@ -6,3 +6,4 @@ bin
 venv/
 .env
 *.db
+*.lock
